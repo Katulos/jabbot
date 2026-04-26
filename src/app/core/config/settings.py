@@ -18,8 +18,18 @@ settings = Dynaconf(
 )
 
 settings.validators.register(
-    # debug
+    # Core
     Validator("debug", default=False, is_type_of=bool),
+    # slixmpp
+    Validator("xmpp_jid", is_type_of=str, required=True),
+    Validator("xmpp_password", is_type_of=str, required=True),
+    Validator(
+        "xmpp_resource",
+        is_type_of=str,
+        required=True,
+        apply_default_on_none=True,
+        default="jabbot",
+    ),
 )
 
 try:

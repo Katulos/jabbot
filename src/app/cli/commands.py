@@ -2,6 +2,7 @@ import logging
 
 import click
 
+from ..client.bot import run
 from ..core import logging as logger
 from ..core.config import settings
 
@@ -22,4 +23,4 @@ def start() -> None:
     else:
         logger.setup_logger(loglevel=logging.INFO)
 
-    click.echo("Hello world")
+    run()

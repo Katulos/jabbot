@@ -1,0 +1,2 @@
+class PluginCouldNotLoad(Exception):
+    pass
