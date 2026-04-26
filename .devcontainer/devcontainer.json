@@ -1,47 +1,42 @@
 {
-  "name": "JabBot",
-  "dockerComposeFile": "docker-compose.yaml",
-  "service": "devcontainer",
-  "remoteUser": "vscode",
-  "workspaceFolder": "/workspace",
-  "customizations": {
-    "vscode": {
-      "settings": {
-        "terminal.integrated.profiles.linux": {
-          "bash": {
-            "path": "/bin/bash"
-          }
-        },
-        "terminal.integrated.defaultProfile.linux": "bash",
-        "terminal.integrated.inheritEnv": true,
-        "editor.bracketPairColorization.enabled": true,
-        "editor.guides.bracketPairs": "active"
-      },
-      "extensions": [
-        "EditorConfig.EditorConfig",
-        "ms-python.python",
-        "ms-python.vscode-pylance",
-        // "codeium.codeium",
-        "charliermarsh.ruff"
-
-
-      ]
-    }
-  },
-  "postCreateCommand": {
-    "setupEnvironment": "uv venv .venv --python 3.10"
-  },
-  "remoteEnv": {
-    "PATH": "${containerWorkspaceFolder}/.venv/bin:${containerEnv:PATH}",
-    "SSH_AUTH_SOCK": "/ssh-agent",
-    "WORKSPACE": "${containerWorkspaceFolder}",
-    "UV_LINK_MODE": "copy",
-    "UV_VENV_CLEAR": "1"
-  },
-  "features": {
-    "ghcr.io/va-h/devcontainers-features/uv:1": {}
-  },
-  "mounts": [
-    "source=${SSH_AUTH_SOCK},target=/ssh-agent,type=bind"
-  ]
+    "name": "JabBot",
+    "dockerComposeFile": "docker-compose.yaml",
+    "service": "devcontainer",
+    "remoteUser": "vscode",
+    "workspaceFolder": "/workspace",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "terminal.integrated.inheritEnv": true,
+                "terminal.integrated.profiles.linux": {
+                    "bash": {
+                        "path": "/bin/bash"
+                    }
+                }
+            },
+            "extensions": [
+                "christian-kohler.path-intellisense",
+                "EditorConfig.EditorConfig",
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                // "codeium.codeium",
+                "charliermarsh.ruff"
+            ]
+        }
+    },
+    "postCreateCommand": {
+        "setupEnvironment": "uv venv .venv --python 3.10"
+    },
+    "remoteEnv": {
+        "PATH": "${containerWorkspaceFolder}/.venv/bin:${containerEnv:PATH}",
+        "SSH_AUTH_SOCK": "/ssh-agent",
+        "WORKSPACE": "${containerWorkspaceFolder}",
+        "UV_LINK_MODE": "copy",
+        "UV_VENV_CLEAR": "1"
+    },
+    "features": {
+        "ghcr.io/va-h/devcontainers-features/uv:1": {}
+    },
+    "mounts": ["source=${SSH_AUTH_SOCK},target=/ssh-agent,type=bind"]
 }

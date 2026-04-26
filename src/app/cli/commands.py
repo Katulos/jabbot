@@ -7,9 +7,11 @@ from ..core.config import settings
 
 logger.setup_logger()
 
+
 @click.group()
 def cli() -> None:
     pass
+
 
 @cli.command()
 def start() -> None:
