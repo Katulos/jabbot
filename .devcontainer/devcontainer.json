@@ -1,0 +1,46 @@
+{
+  "name": "pyCAdES",
+  "dockerComposeFile": "docker-compose.yaml",
+  "service": "devcontainer",
+  "remoteUser": "vscode",
+  "workspaceFolder": "/workspace",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.profiles.linux": {
+          "bash": {
+            "path": "/bin/bash"
+          }
+        },
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "terminal.integrated.inheritEnv": true,
+        "editor.bracketPairColorization.enabled": true,
+        "editor.guides.bracketPairs": "active"
+      },
+      "extensions": [
+        "charliermarsh.ruff",
+        // "codeium.codeium",
+        "EditorConfig.EditorConfig",
+        "ms-python.python",
+        "ms-python.vscode-pylance"
+        
+      ]
+    }
+  },
+  "postCreateCommand": {
+    "setupEnvironment": "uv venv .venv --python 3.10"
+  },
+  "remoteEnv": {
+    "PATH": "${containerWorkspaceFolder}/.venv/bin:${containerEnv:PATH}",
+    "SSH_AUTH_SOCK": "/ssh-agent",
+    "WORKSPACE": "${containerWorkspaceFolder}",
+    "UV_LINK_MODE": "copy",
+    "UV_VENV_CLEAR": "1"
+  },
+  "features": {
+    "ghcr.io/va-h/devcontainers-features/uv:1": {}
+  },
+  "mounts": [
+    "source=${SSH_AUTH_SOCK},target=/ssh-agent,type=bind"
+  ]
+}

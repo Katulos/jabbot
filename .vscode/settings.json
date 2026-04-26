@@ -1,0 +1,33 @@
+{
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": "active",
+  "editor.rulers": [80, 100, 120],
+  "files.eol": "\n",
+  "files.exclude": {
+        "**/__pycache__": true,
+        "**/.DS_Store": true,
+        "**/.git": true,
+        "**/.venv": true,
+        "**/Thumbs.db": true
+  },
+  "files.watcherExclude": {
+        "**/__pycache__/**": true,
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "**/.venv/**": true
+  },
+  "git.enabled": true,
+  "git.autofetch": true,
+  "[python]": {
+    "defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python3",
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
+    },
+    "editor.formatOnSave": true,
+  },
+  "remote.autoForwardPortsFallback": 0,
+  "search.followSymlinks": false,
+  "search.useIgnoreFiles": true
+}
