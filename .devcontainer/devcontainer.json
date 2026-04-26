@@ -1,5 +1,5 @@
 {
-  "name": "pyCAdES",
+  "name": "JabBot",
   "dockerComposeFile": "docker-compose.yaml",
   "service": "devcontainer",
   "remoteUser": "vscode",
@@ -18,12 +18,13 @@
         "editor.guides.bracketPairs": "active"
       },
       "extensions": [
-        "charliermarsh.ruff",
-        // "codeium.codeium",
         "EditorConfig.EditorConfig",
         "ms-python.python",
-        "ms-python.vscode-pylance"
-        
+        "ms-python.vscode-pylance",
+        // "codeium.codeium",
+        "charliermarsh.ruff"
+
+
       ]
     }
   },
