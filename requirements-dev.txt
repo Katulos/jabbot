@@ -1,4 +1,4 @@
-nox>=2025.2
-pre-commit>=3.5
-python-semantic-release>=9.19
-ruff>=0.7
+nox>=2026.4
+pre-commit>=4.6
+python-semantic-release>=10.5
+ruff>=0.15
