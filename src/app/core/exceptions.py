@@ -1,2 +1,4 @@
-class PluginCouldNotLoad(Exception):
-    pass
+class ApplicationError(Exception): ...
+
+
+class PluginCouldNotLoad(Exception): ...

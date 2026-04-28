@@ -2,6 +2,7 @@
 exclude: |
   (?x)
   ^README\.md$|
+  ^CHANGELOG\.md$|
   # Repos using Sphinx to generate docs don't need prettying
   ^docs/_templates/.*\.html$|
   # You don't usually want a bot to modify your legal texts

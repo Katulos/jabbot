@@ -20,6 +20,27 @@ settings = Dynaconf(
 settings.validators.register(
     # Core
     Validator("debug", default=False, is_type_of=bool),
+    # FastAPI
+    Validator(
+        "api_port",
+        apply_default_on_none=True,
+        default=8000,
+        is_type_of=int,
+        required=True,
+    ),
+    Validator(
+        "api_host",
+        apply_default_on_none=True,
+        default="0.0.0.0",
+        is_type_of=str,
+        required=True,
+    ),
+    Validator(
+        "api_enable_access_log",
+        apply_default_on_none=True,
+        default=False,
+        is_type_of=bool,
+    ),
     # slixmpp
     Validator("xmpp_jid", is_type_of=str, required=True),
     Validator("xmpp_password", is_type_of=str, required=True),
@@ -29,6 +50,34 @@ settings.validators.register(
         required=True,
         apply_default_on_none=True,
         default="jabbot",
+    ),
+    # Scheduler
+    Validator(
+        "scheduler_timezone",
+        is_type_of=str,
+        required=True,
+        apply_default_on_none=True,
+        default="Europe/Moscow",
+    ),
+    Validator(
+        "coalesce",
+        apply_default_on_none=True,
+        default=False,
+        is_type_of=bool,
+    ),
+    Validator(
+        "max_instances",
+        apply_default_on_none=True,
+        default=10,
+        is_type_of=int,
+        required=True,
+    ),
+    Validator(
+        "misfire_grace_time",
+        apply_default_on_none=True,
+        default=3600,
+        is_type_of=int,
+        required=True,
     ),
 )
 

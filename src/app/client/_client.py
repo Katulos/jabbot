@@ -4,10 +4,8 @@ from typing import Any
 
 from slixmpp import ClientXMPP
 
-from app.core.config import settings
 
-
-class EchoBot(ClientXMPP):
+class Client(ClientXMPP):
     def __init__(
         self,
         jid: str,
@@ -16,59 +14,64 @@ class EchoBot(ClientXMPP):
     ) -> None:
         super().__init__(f"{jid}/{resource}", password)
 
+        self.register_plugin("xep_0030")  # Service Discovery
+        self.register_plugin("xep_0199")  # Ping
+        self.register_plugin("xep_0004")  # Data Forms
+        self.register_plugin("xep_0050")  # Adhoc Commands
+
         self.add_event_handler("session_start", self._on_session_start)
         self.add_event_handler("disconnected", self._on_disconnected)
         self.add_event_handler("failed_auth", self._on_auth_failed)
         self.add_event_handler("socket_error", self._on_socket_error)
-        self.add_event_handler("cert_verify_failed", self._on_cert_failed)
-        self.add_event_handler("message", self._message)
+        self.add_event_handler("message", self._on_message)
 
     async def _on_session_start(self, event: dict[str, Any]) -> None:
         self.send_presence()
-        await self.get_roster()
+        self.get_roster()
         logging.info("Session started")
 
     async def _on_disconnected(self, event: dict[str, Any]) -> None:
         logging.info("Disconnected")
 
     async def _on_auth_failed(self, event: dict[str, Any]) -> None:
-        logging.info("Authentication failed")
+        logging.error("Authentication failed")
         self.disconnect()
 
     async def _on_socket_error(self, event: dict[str, Any]) -> None:
-        logging.info("Socket error")
+        logging.error("Socket error")
         self.disconnect()
 
-    async def _on_cert_failed(self, event: dict[str, Any]) -> None:
-        logging.info("Certificate verification failed")
-        self.disconnect()
-
-    async def _message(self, msg):
+    async def _on_message(self, msg):
         if msg["type"] in ("chat", "normal"):
             msg.reply("Thanks for sending\n{body}".format(**msg)).send()
 
 
-def run() -> None:
-    jid = settings.get("xmpp_jid")
-    password = settings.get("xmpp_password")
-    resource = settings.get("xmpp_resource")
-
-    client = EchoBot(jid, password, resource)
-
-    client.register_plugin("xep_0030")  # Service Discovery
-    client.register_plugin("xep_0199")  # Ping
-    client.register_plugin("xep_0004")  # Data Forms
-    client.register_plugin("xep_0050")  # Adhoc Commands
-
+async def run(client: Client, stop_event: asyncio.Event) -> None:
     try:
         client.connect()
-        asyncio.get_event_loop().run_forever()
-        logging.info("Connected")
     except Exception as e:
-        logging.critical(e)
-        raise
-    except KeyboardInterrupt:
-        client.disconnect()
+        logging.error(e)
+
+    tasks = [
+        asyncio.create_task(stop_event.wait()),
+    ]
+
+    try:
+        done, pending = await asyncio.wait(
+            tasks,
+            return_when=asyncio.FIRST_COMPLETED,
+        )
+
+        for task in pending:
+            task.cancel()
+            try:
+                await task
+            except asyncio.CancelledError:
+                pass
+
+    except asyncio.CancelledError:
+        pass
     finally:
         client.disconnect()
-        logging.info("Disconnected")
+
+        await asyncio.sleep(1)
