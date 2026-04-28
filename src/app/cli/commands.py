@@ -2,44 +2,54 @@ import asyncio
 import logging
 from contextlib import suppress
 
-import asyncclick as click
+import click
 from dishka import AsyncContainer
 
+from ..api import run_api
 from ..client import Client
 from ..core import logging as logger
 from ..core.config import settings
 from ..core.di.container import get_async_container
-from ..infrastructure.scheduler.apscheduler import Scheduler
-
-logger.setup_logger()
 
 
 @click.group()
-async def cli() -> None:
-    pass
-
-
-@cli.command()
-async def start() -> None:
+def cli() -> None:
     debug = settings.get("debug")
 
     if debug:
-        logger.setup_logger(loglevel=logging.INFO)
+        logger.setup_logger(loglevel=logging.DEBUG)
     else:
         logger.setup_logger(loglevel=logging.INFO)
 
-    await run_client()
+
+@cli.group()
+def run() -> None:
+    """Run application components."""
+    pass
 
 
-async def run_client():
+@run.command()
+def api() -> None:
+    """Run API server."""
+    logging.info("Running API server")
+    run_api()
+
+
+@run.command()
+def client() -> None:
+    """Run XMPP client."""
+    logging.info("Running XMPP client")
+    asyncio.run(run_client())
+
+
+async def run_client() -> None:
+
     container: AsyncContainer | None = None
     client: Client | None = None
     client_task: asyncio.Task | None = None
 
     try:
         container = get_async_container()
-
-        await container.get(Scheduler)
 
         client = await container.get(Client)
 
