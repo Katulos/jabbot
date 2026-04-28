@@ -1,19 +1,21 @@
 import asyncio
 import logging
-from contextlib import suppress
+import signal
 
 import click
-from dishka import AsyncContainer
 
-from ..api import run_api
+from ..api import run as run_api
 from ..client import Client
+from ..client import run as run_client
 from ..core import logging as logger
 from ..core.config import settings
 from ..core.di.container import get_async_container
+from ..infrastructure.scheduler.scheduler import Scheduler
 
 
 @click.group()
 def cli() -> None:
+    """Main CLI group."""
     debug = settings.get("debug")
 
     if debug:
@@ -39,80 +41,68 @@ def api() -> None:
 def client() -> None:
     """Run XMPP client."""
     logging.info("Running XMPP client")
-    asyncio.run(run_client())
+    asyncio.run(_run_xmpp_client())
 
 
-async def run_client() -> None:
+@run.command()
+def scheduler() -> None:
+    """Run Scheduler."""
+    logging.info("Running Scheduler")
+    asyncio.run(_run_scheduler())
 
-    container: AsyncContainer | None = None
-    client: Client | None = None
-    client_task: asyncio.Task | None = None
+
+async def _run_scheduler() -> None:
+    container = get_async_container()
+
+    loop = asyncio.get_running_loop()
+
+    stop_event = asyncio.Event()
+
+    def signal_handler():
+        logging.info("Received exit signal.")
+        stop_event.set()
 
     try:
-        container = get_async_container()
+        for sig in (signal.SIGINT, signal.SIGTERM):
+            loop.add_signal_handler(sig, signal_handler)
+    except NotImplementedError:
+        logging.warning(
+            "Signal handlers not supported on this platform via add_signal_handler.",
+        )
 
-        client = await container.get(Client)
-
-        client.connect()
-
-        client_task = asyncio.create_task(asyncio.sleep(0))
-
-        logging.info("XMPP Bot is running. Press Ctrl+C to exit.")
-
-        stop_event = asyncio.Event()
-
-        try:
+    try:
+        async with container as ctx:
+            await ctx.get(Scheduler)
             await stop_event.wait()
-        except asyncio.CancelledError:
-            logging.info("Shutdown signal received (CancelledError).")
-
-    except KeyboardInterrupt:
-        logging.info("KeyboardInterrupt caught directly.")
     except Exception as e:
         logging.critical(e)
-        raise
     finally:
-        logging.info("Starting graceful shutdown...")
+        await container.close()
 
-        if client_task and not client_task.done():
-            client_task.cancel()
-            with suppress(asyncio.CancelledError):
-                await client_task
 
-        if client:
-            try:
-                client.disconnect()
-                logging.info("XMPP Client disconnected.")
-            except RuntimeError as e:
-                if "Event loop is closed" in str(e):
-                    logging.info(
-                        "Loop closed during client disconnect. Ignored.",
-                    )
-                else:
-                    logging.error(f"Error during client disconnect: {e}")
-            except Exception as e:
-                logging.error(
-                    f"Unexpected error during client disconnect: {e}",
-                )
+async def _run_xmpp_client() -> None:
+    container = get_async_container()
 
-        if container:
-            try:
-                loop = asyncio.get_running_loop()
-                if not loop.is_closed():
-                    await container.close()
-                    logging.info("DI Container closed successfully.")
-                else:
-                    logging.warning(
-                        "Event loop is closed. Skipping container close.",
-                    )
-            except RuntimeError as e:
-                if "Event loop is closed" in str(e):
-                    logging.info(
-                        "Loop closed during container close. Ignored.",
-                    )
-                else:
-                    logging.error(f"Error closing DI container: {e}")
-            except Exception as e:
-                logging.error(f"Unexpected error closing DI container: {e}")
+    client = await container.get(Client)
+    stop_event = asyncio.Event()
 
-        logging.info("Application shutdown complete.")
+    loop = asyncio.get_running_loop()
+
+    def signal_handler():
+        logging.info("Received exit signal.")
+        stop_event.set()
+
+    try:
+        for sig in (signal.SIGINT, signal.SIGTERM):
+            loop.add_signal_handler(sig, signal_handler)
+    except NotImplementedError:
+        logging.warning(
+            "Signal handlers not supported on this platform via add_signal_handler.",
+        )
+
+    try:
+        await run_client(client, stop_event)
+    except Exception as e:
+        logging.critical(f"Unhandled exception in main: {e}", exc_info=True)
+    finally:
+        await container.close()

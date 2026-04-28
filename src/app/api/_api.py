@@ -28,7 +28,7 @@ fast_app = FastAPI(
 )
 
 
-def run_api() -> None:
+def run() -> None:
     container = get_async_container()
 
     setup_dishka(container=container, app=fast_app)
