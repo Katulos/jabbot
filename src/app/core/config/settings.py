@@ -30,6 +30,34 @@ settings.validators.register(
         apply_default_on_none=True,
         default="jabbot",
     ),
+    # Scheduler
+    Validator(
+        "scheduler_timezone",
+        is_type_of=str,
+        required=True,
+        apply_default_on_none=True,
+        default="Europe/Moscow",
+    ),
+    Validator(
+        "coalesce",
+        apply_default_on_none=True,
+        default=False,
+        is_type_of=bool,
+    ),
+    Validator(
+        "max_instances",
+        apply_default_on_none=True,
+        default=10,
+        is_type_of=int,
+        required=True,
+    ),
+    Validator(
+        "misfire_grace_time",
+        apply_default_on_none=True,
+        default=3600,
+        is_type_of=int,
+        required=True,
+    ),
 )
 
 try:

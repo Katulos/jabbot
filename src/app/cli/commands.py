@@ -9,6 +9,9 @@ from ..client import Client
 from ..core import logging as logger
 from ..core.config import settings
 from ..core.di.container import get_async_container
+from ..infrastructure.scheduler.apscheduler import Scheduler
+
+logger.setup_logger()
 
 
 @click.group()
@@ -35,6 +38,8 @@ async def run_client():
 
     try:
         container = get_async_container()
+
+        await container.get(Scheduler)
 
         client = await container.get(Client)
 
