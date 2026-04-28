@@ -1,7 +1,8 @@
 aiodns==4.0.0
 annotated-types==0.7.0
+asyncclick==8.3.0.3 ; python_full_version < '3.11'
+asyncclick==8.3.0.7 ; python_full_version >= '3.11'
 cffi==2.0.0
-click==8.3.3
 colorama==0.4.6 ; sys_platform == 'win32'
 cryptography==47.0.0
 dishka==1.10.1

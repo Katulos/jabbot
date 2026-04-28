@@ -6,7 +6,7 @@ readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.10"
 dependencies = [
-    "click>=8.3.3",
+    "asyncclick>=8.3.0.3",
     "dishka>=1.10.1",
     "dynaconf>=3.2.13",
     "orjson>=3.11.8",
