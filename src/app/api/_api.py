@@ -5,8 +5,8 @@ import uvicorn
 from dishka.integrations.fastapi import setup_dishka
 from fastapi import FastAPI
 
-from ..core.config import settings
 from ..core.di.container import get_async_container
+from ..core.settings import settings
 from .exceptions import include_exception_handlers
 from .v1.routes import include_routers
 

@@ -5,7 +5,7 @@ from apscheduler.triggers.cron import CronTrigger
 from dishka import AsyncContainer
 
 from ...client import Client
-from ...core.config import settings
+from ...core.settings import settings
 from .context import ScheduledContext
 from .scheduler import Scheduler
 from .wrappers import send_delay_message as _send_delay_message_func

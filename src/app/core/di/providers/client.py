@@ -3,7 +3,7 @@ import logging
 from dishka import Provider, Scope, provide
 
 from ....client import Client
-from ...config import settings
+from ....core.settings import settings
 
 
 class ClientProvider(Provider):

@@ -8,8 +8,8 @@ from ..api import run as run_api
 from ..client import Client
 from ..client import run as run_client
 from ..core import logging as logger
-from ..core.config import settings
 from ..core.di.container import get_async_container
+from ..core.settings import settings
 from ..infrastructure.scheduler.scheduler import Scheduler
 
 
