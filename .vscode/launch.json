@@ -2,17 +2,17 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Run app",
+            "name": "Python: Run jabbot",
             "type": "python",
             "request": "launch",
             "python": "${command:python.interpreterPath}",
             "console": "integratedTerminal",
-            "module": "app",
-            "args": ["start"],
+            "module": "jabbot",
+            "args": ["run", "client"],
             "cwd": "${workspaceRoot}"
         },
         {
-            "name": "Python: Debug app",
+            "name": "Python: Debug jabbot",
             "type": "debugpy",
             "request": "launch",
             "stopOnEntry": false,
@@ -20,8 +20,8 @@
             "python": "${command:python.interpreterPath}",
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart",
-            "module": "app",
-            "args": ["start"],
+            "module": "jabbot",
+            "args": ["run", "client"],
             "cwd": "${workspaceRoot}"
         },
         {

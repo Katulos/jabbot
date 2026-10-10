@@ -20,10 +20,10 @@ dependencies = [
 ]
 
 [tool.setuptools.dynamic]
-version = {attr = "app.__version__"}
+version = {attr = "jabbot.__version__"}
 
 [project.scripts]
-jabbot = "app.cli.commands:cli"
+jabbot = "jabbot.cli.commands:cli"
 
 [tool.setuptools.packages.find]
 where = ["src"]

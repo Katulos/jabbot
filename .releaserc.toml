@@ -1,6 +1,6 @@
 [semantic_release]
 version_variables = [
-    "src/app/__init__.py:__version__"
+    "src/jabbot/__init__.py:__version__"
 ]
 assets = []
 build_command = "wget -qO- https://astral.sh/uv/install.sh | sh && ~/.local/bin/uv build"
