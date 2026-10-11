@@ -79,6 +79,8 @@ settings.validators.register(
         is_type_of=int,
         required=True,
     ),
+    # MTS API
+    Validator("mts", is_type_of=dict, default=[]),
 )
 
 try:

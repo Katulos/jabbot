@@ -43,17 +43,17 @@ class XMPPClient(Client):
         adhoc_registry = AdhocCommandRegistry.get_instance()
         adhoc_registry.load_commands(self.client)
 
-        logging.info("Session started")
+        logging.debug("XMPP Client session started")
 
     async def _on_disconnected(self, event: dict[str, Any]) -> None:
-        logging.info("Disconnected")
+        logging.debug("XMPP Client disconnected")
 
     async def _on_auth_failed(self, event: dict[str, Any]) -> None:
-        logging.error("Authentication failed")
+        logging.error("XMPP Client authentication failed")
         self.client.disconnect()
 
     async def _on_socket_error(self, event: dict[str, Any]) -> None:
-        logging.error("Socket error")
+        logging.error("XMPP Client socket error")
         self.client.disconnect()
 
     async def _on_message(self, msg):
@@ -125,3 +125,52 @@ class XMPPClient(Client):
 
     async def close(self) -> None:
         self.client.disconnect()
+
+
+class XMPPSchedulerClient(Client):
+    def __init__(self, container: AsyncContainer) -> None:
+
+        XMPPClientContext.container = container
+
+        self.container = container
+
+        jid = settings.get("xmpp.jid")
+        password = settings.get("xmpp.password")
+        resource = settings.get("xmpp.resource", "scheduler")
+
+        self.client = ClientXMPP(
+            f"{jid}/{resource}",
+            password,
+        )
+
+    async def _on_session_start(self, event: dict[str, Any]) -> None:
+        try:
+            await self.client.get_roster()
+            self.client.send_presence()
+        except IqError as err:
+            logging.error("Error: {}".format(err.iq["error"]["condition"]))
+        except IqTimeout:
+            logging.error("Error: Request timed out")
+        finally:
+            await self.client.disconnect()
+
+    async def _on_disconnected(self, event: dict[str, Any]) -> None:
+        logging.debug("Scheduler XMPP Client disconnected")
+
+    async def _on_auth_failed(self, event: dict[str, Any]) -> None:
+        logging.error("Scheduler XMPP Client authentication failed")
+        self.client.disconnect()
+
+    async def _on_socket_error(self, event: dict[str, Any]) -> None:
+        logging.error("Scheduler XMPP Client socket error")
+        self.client.disconnect()
+
+    async def start(self) -> None:
+        self.client.add_event_handler("session_start", self._on_session_start)
+        self.client.add_event_handler("disconnected", self._on_disconnected)
+        self.client.add_event_handler("failed_auth", self._on_auth_failed)
+        self.client.add_event_handler("socket_error", self._on_socket_error)
+        await self.client.connect()
+
+    async def close(self) -> None:
+        await self.client.disconnect()

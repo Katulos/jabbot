@@ -1,5 +1,11 @@
 from .context import XMPPClientContext, inject
 from .protocol import Client
-from .xmppclient import XMPPClient
+from .xmppclient import XMPPClient, XMPPSchedulerClient
 
-__all__ = ["Client", "XMPPClientContext", "inject", "XMPPClient"]
+__all__ = [
+    "Client",
+    "XMPPClientContext",
+    "XMPPSchedulerClient",
+    "inject",
+    "XMPPClient",
+]
