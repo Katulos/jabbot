@@ -1,21 +1,29 @@
-import logging
+from collections.abc import AsyncIterable
 
-from dishka import Provider, Scope, provide
+from dishka import AsyncContainer, Provider, Scope, provide
 
-from ....client import Client
-from ....core.settings import settings
+from ....infrastructure.xmpp import Client, XMPPClient, XMPPSchedulerClient
 
 
 class ClientProvider(Provider):
     scope = Scope.APP
 
     @provide
-    async def provide_client(self) -> Client:
-        try:
-            jid = settings.get("xmpp_jid")
-            password = settings.get("xmpp_password")
-            resource = settings.get("xmpp_resource")
-            client = Client(jid, password, resource)
-            return client
-        except Exception as e:
-            logging.exception(e)
+    async def provide_client(
+        self,
+        container: AsyncContainer,
+    ) -> AsyncIterable[Client]:
+        async with XMPPClient(
+            container=container,
+        ) as client:
+            yield client
+
+    @provide
+    async def provide_scheduler_client(
+        self,
+        container: AsyncContainer,
+    ) -> AsyncIterable[XMPPSchedulerClient]:
+        async with XMPPSchedulerClient(
+            container=container,
+        ) as client:
+            yield client

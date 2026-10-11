@@ -42,10 +42,10 @@ settings.validators.register(
         is_type_of=bool,
     ),
     # slixmpp
-    Validator("xmpp_jid", is_type_of=str, required=True),
-    Validator("xmpp_password", is_type_of=str, required=True),
+    Validator("xmpp.jid", is_type_of=str, required=True),
+    Validator("xmpp.password", is_type_of=str, required=True),
     Validator(
-        "xmpp_resource",
+        "xmpp.resource",
         is_type_of=str,
         required=True,
         apply_default_on_none=True,
@@ -79,6 +79,8 @@ settings.validators.register(
         is_type_of=int,
         required=True,
     ),
+    # MTS API
+    Validator("mts", is_type_of=dict, default=[]),
 )
 
 try:

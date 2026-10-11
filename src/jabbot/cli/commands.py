@@ -5,12 +5,11 @@ import signal
 import click
 
 from ..api import run as run_api
-from ..client import Client
-from ..client import run as run_client
 from ..core import logging as logger
 from ..core.di.container import get_async_container
 from ..core.settings import settings
-from ..infrastructure.scheduler.scheduler import Scheduler
+from ..infrastructure.scheduler import Scheduler
+from ..infrastructure.xmpp import Client
 
 
 @click.group()
@@ -83,10 +82,9 @@ async def _run_scheduler() -> None:
 async def _run_xmpp_client() -> None:
     container = get_async_container()
 
-    client = await container.get(Client)
-    stop_event = asyncio.Event()
-
     loop = asyncio.get_running_loop()
+
+    stop_event = asyncio.Event()
 
     def signal_handler():
         logging.info("Received exit signal.")
@@ -101,8 +99,10 @@ async def _run_xmpp_client() -> None:
         )
 
     try:
-        await run_client(client, stop_event)
+        async with container as ctx:
+            await ctx.get(Client)
+            await stop_event.wait()
     except Exception as e:
-        logging.critical(f"Unhandled exception in main: {e}", exc_info=True)
+        logging.critical(e)
     finally:
         await container.close()

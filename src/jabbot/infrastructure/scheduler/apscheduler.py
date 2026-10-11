@@ -4,10 +4,9 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from dishka import AsyncContainer
 
-from ...client import Client
 from ...core.settings import settings
 from .context import ScheduledContext
-from .scheduler import Scheduler
+from .protocol import Scheduler
 from .wrappers import send_delay_message as _send_delay_message_func
 
 
@@ -15,13 +14,10 @@ class ApScheduler(Scheduler):
     def __init__(
         self,
         container: AsyncContainer,
-        client: Client,
     ) -> None:
         ScheduledContext.container = container
 
         self.container = container
-
-        self.client = client
 
         self.executor = AsyncIOExecutor()
 
@@ -50,11 +46,11 @@ class ApScheduler(Scheduler):
                 id="send_delay_message",
                 func=_send_delay_message_func,
                 kwargs={
-                    "client": self.client,
-                    "message": settings.get("message"),
+                    "message": "Hello World!",
+                    "to": "example@example.com",
                 },
                 trigger=CronTrigger(
-                    day_of_week="mon-fri",
+                    day_of_week="mon-sun",
                     hour="*",
                     minute="*",
                     timezone=settings.get("scheduler_timezone"),
