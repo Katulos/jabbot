@@ -177,7 +177,7 @@ cython_debug/
 data/
 !data/.gitkeep
 /config.yml
-.devcontainer/.env
+old_code
 
 # Ignore dynaconf secret files
 .secrets.*
