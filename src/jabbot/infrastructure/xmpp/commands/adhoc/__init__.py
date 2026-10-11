@@ -7,6 +7,8 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
+from slixmpp import ClientXMPP
+
 
 class BaseAdhocCommand(ABC):
     @property
@@ -57,7 +59,7 @@ class AdhocCommandRegistry:
 
     def load_commands(
         self,
-        client: Any,
+        client: ClientXMPP,
         commands_dir: str = os.path.dirname(__file__),
     ) -> None:
         if self._initialized:
@@ -154,7 +156,7 @@ class AdhocCommandRegistry:
 
     def _create_initial_handler(
         self,
-        client: Any,
+        client: ClientXMPP,
         command: BaseAdhocCommand,
     ) -> Callable:
 

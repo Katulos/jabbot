@@ -2,9 +2,8 @@ from collections.abc import AsyncIterable
 
 from dishka import AsyncContainer, Provider, Scope, provide
 
-from ....client import Client
-from ....infrastructure.scheduler.apscheduler import ApScheduler
-from ....infrastructure.scheduler.scheduler import Scheduler
+from ....infrastructure.scheduler import ApScheduler, Scheduler
+from ....infrastructure.xmpp import Client
 
 
 class SchedulerProvider(Provider):

@@ -3,9 +3,9 @@ from typing import Any
 
 from dishka.integrations.base import FromDishka
 
-from ...client import Client
+from ..xmpp import Client
 from .context import inject
-from .scheduler import Scheduler
+from .protocol import Scheduler
 
 
 @inject

@@ -4,10 +4,10 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from dishka import AsyncContainer
 
-from ...client import Client
 from ...core.settings import settings
+from ..xmpp.protocol import Client
 from .context import ScheduledContext
-from .scheduler import Scheduler
+from .protocol import Scheduler
 from .wrappers import send_delay_message as _send_delay_message_func
 
 
